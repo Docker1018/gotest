@@ -9,11 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Hi() {
-	fmt.Println("?")
-}
-
-func ConnectDB() {
+func ConnectDB() (a *mongo.Collection) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
@@ -22,15 +18,7 @@ func ConnectDB() {
 	}
 
 	collection := client.Database("test").Collection("member")
-	fmt.Println(collection)
-	fmt.Println("ddd")
-}
+	fmt.Println("mongo conn")
 
-// func ListAll() {
-// 	res, err := collection.Find(context.Background(), bson.M{})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	fmt.Println("fasf")
-// 	fmt.Println(res)
-// }
+	return collection
+}

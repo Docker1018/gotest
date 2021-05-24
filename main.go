@@ -2,7 +2,9 @@ package main
 
 import (
 	"learning/controller"
+	"learning/model"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/kataras/iris/v12"
 )
 
@@ -14,24 +16,38 @@ func main() {
 		memberApi.Use(iris.Compression)
 
 		// GET: http://localhost:8080/member
-		memberApi.Get("/", list)
+		memberApi.Get("/{name}", find)
 
 		// POST: http://localhost:8080/member
-		memberApi.Post("/", list)
+		memberApi.Post("/", insert)
 
 	}
 
 	app.Listen(":8080")
 }
 
-func list(ctx iris.Context) {
-	// member := []Member{
-	// 	{"1111", "name1", "acc1", "pass1"},
-	// 	{"2222", "name2", "acc2", "pass2"},
-	// 	{"3333", "name3", "acc3", "pass3"},
-	// 	{"4444", "name4", "acc4", "pass4"},
-	// }
-	// ctx.JSON(member)
-	res := controller.Insert()
+func insert(ctx iris.Context) {
+	m := model.Member{}
+	err := ctx.ReadJSON(&m)
+	if err != nil {
+		spew.Dump(err)
+		spew.Dump("err")
+	}
+	res := controller.Insert(&m)
+	if res != nil {
+		return
+	}
+	ctx.JSON(map[string]interface{}{
+		"msg": "goood!",
+	})
+}
+
+func find(ctx iris.Context) {
+	name := ctx.Params().Get("name")
+	spew.Dump(name)
+	res, err := controller.Find(name)
+	if err != nil {
+		return
+	}
 	ctx.JSON(res)
 }

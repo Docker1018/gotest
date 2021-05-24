@@ -2,21 +2,30 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"learning/model"
 	"learning/mongodb"
-	"log"
 
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/davecgh/go-spew/spew"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-func Insert() (res *mongo.InsertOneResult) {
-	fmt.Println("insert")
+func Insert(in *model.Member) (err error) {
 	coll := mongodb.ConnectDB()
-	data := &model.Member{Name: "nameee", Account: "Accccc", Password: "passwordddd"}
-	result, err := coll.InsertOne(context.TODO(), data)
+	_, err = coll.InsertOne(context.TODO(), in)
 	if err != nil {
-		log.Fatal(err)
+		spew.Dump(err)
+		return
 	}
-	return result
+	return
+}
+
+func Find(in string) (result *model.Member, err error) {
+	coll := mongodb.ConnectDB()
+	f := bson.M{"name": in}
+	res := coll.FindOne(context.TODO(), f)
+	err = res.Decode(&result)
+	if err != nil {
+		return
+	}
+	return
 }

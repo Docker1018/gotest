@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+// 新增會員
 func Insert(in *model.Member) (err error) {
 	coll := mongodb.ConnectDB()
 	_, err = coll.InsertOne(context.TODO(), in)
@@ -19,6 +20,7 @@ func Insert(in *model.Member) (err error) {
 	return
 }
 
+// 根據會員名稱查詢會員資料
 func Find(in string) (result *model.Member, err error) {
 	coll := mongodb.ConnectDB()
 	f := bson.M{"name": in}
